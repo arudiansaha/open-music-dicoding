@@ -26,7 +26,7 @@ class AlbumService {
     const album = this._album.filter((a) => a.id === id)[0];
 
     if (!album) {
-      throw new NotFoundError('Album gagal ditambahkan');
+      throw new NotFoundError('Album tidak ditemukan');
     }
 
     return album;
