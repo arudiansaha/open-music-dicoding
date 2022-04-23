@@ -1,0 +1,24 @@
+{
+  "name": "open-music-api-v1",
+  "version": "1.0.0",
+  "description": "Submission 1 Back-End Fundamental",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./src/server.js",
+    "lint": "eslint ./src"
+  },
+  "author": "Rizky Ardiansyah",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/hapi": "^20.2.2",
+    "joi": "^17.6.0",
+    "nanoid": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.14.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "nodemon": "^2.0.15"
+  }
+}
