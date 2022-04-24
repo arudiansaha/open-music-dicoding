@@ -54,7 +54,48 @@ class SongHandler {
     }
   }
 
-  async getAllSongsHandler() {
+  async getAllSongsHandler(request) {
+    const params = request.query;
+
+    const hasProperty = Object.prototype.hasOwnProperty;
+
+    const isTitleParams = hasProperty.call(params, 'title');
+    const isPerformerParams = hasProperty.call(params, 'performer');
+
+    if (isTitleParams && isPerformerParams) {
+      const sortByTwoParams = await this._service
+        .getSongByTwoParams(params.title, params.performer);
+
+      return {
+        status: 'success',
+        data: {
+          songs: sortByTwoParams,
+        },
+      };
+    }
+
+    if (isTitleParams) {
+      const songSortByTitle = await this._service.getSongByTitle(params.title);
+
+      return {
+        status: 'success',
+        data: {
+          songs: songSortByTitle,
+        },
+      };
+    }
+
+    if (isPerformerParams) {
+      const songSortByPerformer = await this._service.getSongByPerformer(params.performer);
+
+      return {
+        status: 'success',
+        data: {
+          songs: songSortByPerformer,
+        },
+      };
+    }
+
     const songs = this._service.getAllSongs();
 
     return {

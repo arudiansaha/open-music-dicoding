@@ -1,12 +1,9 @@
 const { nanoid } = require('nanoid');
+const MusicService = require('./MusicService');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
-class AlbumService {
-  constructor() {
-    this._album = [];
-  }
-
+class AlbumService extends MusicService {
   addAlbum({ name, year }) {
     const id = nanoid(16);
     const newAlbum = { id, name, year };

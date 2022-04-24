@@ -1,12 +1,9 @@
 const { nanoid } = require('nanoid');
+const MusicService = require('./MusicService');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
-class SongService {
-  constructor() {
-    this._song = [];
-  }
-
+class SongService extends MusicService {
   addSong({
     title, year, genre, performer, duration, albumId,
   }) {
@@ -29,6 +26,39 @@ class SongService {
   getAllSongs() {
     const songs = this._song.map(({ id, title, performer }) => ({ id, title, performer }));
     return songs;
+  }
+
+  getSongByTitle(params) {
+    const lowerParams = params.toString().toLowerCase();
+    const songsTitle = this._song.filter((s) => s.title.toString()
+      .toLowerCase()
+      .includes(lowerParams));
+
+    return songsTitle.slice(0, songsTitle.length)
+      .map(({ id, title, performer }) => ({ id, title, performer }));
+  }
+
+  getSongByPerformer(params) {
+    const lowerParams = params.toString().toLowerCase();
+    const songsPerformer = this._song.filter((s) => s.performer.toString()
+      .toLowerCase()
+      .includes(lowerParams));
+
+    return songsPerformer.slice(0, songsPerformer.length)
+      .map(({ id, title, performer }) => ({ id, title, performer }));
+  }
+
+  getSongByTwoParams(paramsOne, paramsTwo) {
+    const lowerTitle = paramsOne.toString().toLowerCase();
+    const lowerPerformer = paramsTwo.toString().toLowerCase();
+    const params = this._song.filter((s) => s.title.toString()
+      .toLowerCase()
+      .includes(lowerTitle)
+      && s.performer.toString()
+        .toLowerCase()
+        .includes(lowerPerformer)).map(({ id, title, performer }) => ({ id, title, performer }));
+
+    return params.slice(0, params.length);
   }
 
   getSongById(id) {
