@@ -96,7 +96,7 @@ class SongHandler {
       };
     }
 
-    const songs = this._service.getAllSongs();
+    const songs = await this._service.getAllSongs();
 
     return {
       status: 'success',

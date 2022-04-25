@@ -1,9 +1,12 @@
 const { nanoid } = require('nanoid');
-const MusicService = require('./MusicService');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
-class SongService extends MusicService {
+class SongService {
+  constructor() {
+    this._song = [];
+  }
+
   addSong({
     title, year, genre, performer, duration, albumId,
   }) {
@@ -56,7 +59,8 @@ class SongService extends MusicService {
       .includes(lowerTitle)
       && s.performer.toString()
         .toLowerCase()
-        .includes(lowerPerformer)).map(({ id, title, performer }) => ({ id, title, performer }));
+        .includes(lowerPerformer))
+      .map(({ id, title, performer }) => ({ id, title, performer }));
 
     return params.slice(0, params.length);
   }
