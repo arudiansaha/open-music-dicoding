@@ -1,13 +1,13 @@
 require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
+
 const album = require('./api/albums');
-const song = require('./api/songs');
-// const AlbumService = require('./services/inMemory/AlbumService');
-// const SongService = require('./services/inMemory/SongService');
 const AlbumService = require('./services/inDatabase/AlbumService');
-const SongService = require('./services/inDatabase/SongService');
 const albumValidator = require('./validator/albums');
+
+const song = require('./api/songs');
+const SongService = require('./services/inDatabase/SongService');
 const songValidator = require('./validator/songs');
 
 const init = async () => {
@@ -28,7 +28,8 @@ const init = async () => {
     {
       plugin: album,
       options: {
-        service: albumService,
+        albumService,
+        songService,
         validator: albumValidator,
       },
     },
@@ -42,7 +43,9 @@ const init = async () => {
   ]);
 
   await server.start();
+  /* eslint-disable */
   console.log(`Server berjalan pada: ${server.info.uri}`);
+  /* eslint-disable */
 };
 
 init();

@@ -1,11 +1,8 @@
 /* eslint-disable camelcase */
-
-exports.shorthands = undefined;
-
 exports.up = (pgm) => {
   pgm.createTable('albums', {
     id: {
-      type: 'VARCHAR(30)',
+      type: 'VARCHAR(50)',
       primaryKey: true,
     },
     name: {

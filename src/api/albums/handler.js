@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 const ClientError = require('../../exceptions/ClientError');
 
 class AlbumHandler {
-  constructor(service, validator) {
-    this._service = service;
+  constructor(albumService, songService, validator) {
+    this._albumService = albumService;
+    this._songService = songService;
     this._validator = validator;
 
     this.postAlbumHandler = this.postAlbumHandler.bind(this);
@@ -16,7 +18,7 @@ class AlbumHandler {
       this._validator.validateAlbumPayload(request.payload);
 
       const { name, year } = request.payload;
-      const albumId = await this._service.addAlbum({ name, year });
+      const albumId = await this._albumService.addAlbum({ name, year });
 
       const response = h.response({
         status: 'success',
@@ -53,12 +55,16 @@ class AlbumHandler {
   async getAlbumByIdHandler(request, h) {
     try {
       const { id } = request.params;
-      const album = await this._service.getAlbumById(id);
+      const album = await this._albumService.getAlbumById(id);
+      const songs = await this._songService.getSongByAlbumId(id);
 
       return {
         status: 'success',
         data: {
-          album,
+          album: {
+            ...album,
+            songs: [...songs],
+          },
         },
       };
     } catch (error) {
@@ -89,7 +95,7 @@ class AlbumHandler {
 
       const { id } = request.params;
 
-      await this._service.editAlbumById(id, request.payload);
+      await this._albumService.editAlbumById(id, request.payload);
 
       return {
         status: 'success',
@@ -121,7 +127,7 @@ class AlbumHandler {
     try {
       const { id } = request.params;
 
-      await this._service.deleteAlbumById(id);
+      await this._albumService.deleteAlbumById(id);
 
       return {
         status: 'success',

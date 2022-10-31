@@ -10,7 +10,7 @@ class SongService {
   addSong({
     title, year, genre, performer, duration, albumId,
   }) {
-    const id = nanoid(16);
+    const id = `song-${nanoid(16)}`;
     const newSong = {
       id, title, year, genre, performer, duration, albumId,
     };
@@ -28,51 +28,80 @@ class SongService {
 
   getAllSongs() {
     const songs = this._song.map(({ id, title, performer }) => ({ id, title, performer }));
-    return songs;
-  }
 
-  getSongByTitle(params) {
-    const lowerParams = params.toString().toLowerCase();
-    const songsTitle = this._song.filter((s) => s.title.toString()
-      .toLowerCase()
-      .includes(lowerParams));
-
-    return songsTitle.slice(0, songsTitle.length)
-      .map(({ id, title, performer }) => ({ id, title, performer }));
-  }
-
-  getSongByPerformer(params) {
-    const lowerParams = params.toString().toLowerCase();
-    const songsPerformer = this._song.filter((s) => s.performer.toString()
-      .toLowerCase()
-      .includes(lowerParams));
-
-    return songsPerformer.slice(0, songsPerformer.length)
-      .map(({ id, title, performer }) => ({ id, title, performer }));
-  }
-
-  getSongByTwoParams(paramsOne, paramsTwo) {
-    const lowerTitle = paramsOne.toString().toLowerCase();
-    const lowerPerformer = paramsTwo.toString().toLowerCase();
-    const params = this._song.filter((s) => s.title.toString()
-      .toLowerCase()
-      .includes(lowerTitle)
-      && s.performer.toString()
-        .toLowerCase()
-        .includes(lowerPerformer))
-      .map(({ id, title, performer }) => ({ id, title, performer }));
-
-    return params.slice(0, params.length);
-  }
-
-  getSongById(id) {
-    const song = this._song.filter((s) => s.id === id)[0];
-
-    if (!song) {
+    if (!songs) {
       throw new NotFoundError('Song tidak ditemukan');
     }
 
-    return song;
+    return songs;
+  }
+
+  getSongByTitle(titleParams) {
+    const titleToLowerCase = titleParams.toString().toLowerCase();
+
+    const songs = this._song.filter((s) => (
+      s.title.toString().toLowerCase().includes(titleToLowerCase)
+    ));
+
+    if (!songs) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    const slicedSongs = songs.slice(0, songs.length);
+
+    return slicedSongs.map(({ id, title, performer }) => ({ id, title, performer }));
+  }
+
+  getSongByPerformer(performerParams) {
+    const performerToLowerCase = performerParams.toString().toLowerCase();
+
+    const songs = this._song.filter((s) => (
+      s.performer.toString().toLowerCase().includes(performerToLowerCase)
+    ));
+
+    if (!songs) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    const slicedSongs = songs.slice(0, songs.length);
+
+    return slicedSongs.map(({ id, title, performer }) => ({ id, title, performer }));
+  }
+
+  getSongByTwoParams(titleParams, performerParams) {
+    const titleToLowerCase = titleParams.toString().toLowerCase();
+    const performerToLowerCase = performerParams.toString().toLowerCase();
+
+    const songs = this._song.filter((s) => (
+      s.title.toString().toLowerCase().includes(titleToLowerCase)
+      && s.performer.toString().toLowerCase().includes(performerToLowerCase)
+    )).map(({ id, title, performer }) => ({ id, title, performer }));
+
+    if (!songs) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    return songs.slice(0, songs.length);
+  }
+
+  getSongByAlbumId(idParams) {
+    const songs = this._song.filter((s) => s.albumId === idParams);
+
+    if (!songs) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    return songs.map(({ id, title, performer }) => ({ id, title, performer }));
+  }
+
+  getSongById(id) {
+    const songs = this._song.filter((s) => s.id === id)[0];
+
+    if (!songs) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    return songs;
   }
 
   editSongById(id, {

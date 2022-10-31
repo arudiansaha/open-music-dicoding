@@ -12,7 +12,7 @@ class SongService {
   async addSong({
     title, year, genre, performer, duration, albumId,
   }) {
-    const id = nanoid(16);
+    const id = `song-${nanoid(16)}`;
 
     const query = {
       text: 'INSERT INTO songs VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id',
@@ -33,47 +33,73 @@ class SongService {
     return result.rows.map(({ id, title, performer }) => ({ id, title, performer }));
   }
 
-  async getSongByTitle(params) {
-    const lowerParams = params.toString().toLowerCase();
+  async getSongByTitle(titleParams) {
+    const titleToLowerCase = titleParams.toString().toLowerCase();
 
     const result = await this._pool.query('SELECT * FROM songs');
 
-    const songsTitle = result.rows.filter((s) => s.title.toString()
-      .toLowerCase()
-      .includes(lowerParams));
+    const songs = result.rows.filter((s) => (
+      s.title.toString().toLowerCase().includes(titleToLowerCase)
+    ));
 
-    return songsTitle.slice(0, songsTitle.length)
-      .map(({ id, title, performer }) => ({ id, title, performer }));
+    if (!result.rows.length) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    const slicedSongs = songs.slice(0, songs.length);
+
+    return slicedSongs.map(({ id, title, performer }) => ({ id, title, performer }));
   }
 
-  async getSongByPerformer(params) {
-    const lowerParams = params.toString().toLowerCase();
+  async getSongByPerformer(performerParams) {
+    const performerToLowerCase = performerParams.toString().toLowerCase();
 
     const result = await this._pool.query('SELECT * FROM songs');
 
-    const songsPerformer = result.rows.filter((s) => s.performer.toString()
-      .toLowerCase()
-      .includes(lowerParams));
+    const songs = result.rows.filter((s) => (
+      s.performer.toString().toLowerCase().includes(performerToLowerCase)
+    ));
 
-    return songsPerformer.slice(0, songsPerformer.length)
-      .map(({ id, title, performer }) => ({ id, title, performer }));
+    if (!result.rows.length) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    const slicedSongs = songs.slice(0, songs.length);
+
+    return slicedSongs.map(({ id, title, performer }) => ({ id, title, performer }));
   }
 
-  async getSongByTwoParams(paramsOne, paramsTwo) {
-    const lowerTitle = paramsOne.toString().toLowerCase();
-    const lowerPerformer = paramsTwo.toString().toLowerCase();
+  async getSongByTwoParams(titleParams, performerParams) {
+    const titleToLowerCase = titleParams.toString().toLowerCase();
+    const performerToLowerCase = performerParams.toString().toLowerCase();
 
     const result = await this._pool.query('SELECT * FROM songs');
 
-    const paramsResult = result.rows.filter((s) => s.title.toString()
-      .toLowerCase()
-      .includes(lowerTitle)
-      && s.performer.toString()
-        .toLowerCase()
-        .includes(lowerPerformer))
-      .map(({ id, title, performer }) => ({ id, title, performer }));
+    const songs = result.rows.filter((s) => (
+      s.title.toString().toLowerCase().includes(titleToLowerCase)
+      && s.performer.toString().toLowerCase().includes(performerToLowerCase)
+    )).map(({ id, title, performer }) => ({ id, title, performer }));
 
-    return paramsResult.slice(0, paramsResult.length);
+    if (!result.rows.length) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    return songs.slice(0, songs.length);
+  }
+
+  async getSongByAlbumId(idParams) {
+    const query = {
+      text: 'SELECT * FROM songs WHERE album_id = $1',
+      values: [idParams],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rows.length === undefined) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    return result.rows.map(({ id, title, performer }) => ({ id, title, performer }));
   }
 
   async getSongById(id) {
