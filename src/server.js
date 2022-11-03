@@ -130,6 +130,9 @@ const init = async () => {
       });
 
       newResponse.code(500);
+      /* eslint-disable no-console */
+      console.log(newResponse);
+      /* eslint-disable no-console */
       return newResponse;
     }
 
@@ -137,9 +140,9 @@ const init = async () => {
   });
 
   await server.start();
-  /* eslint-disable */
+  /* eslint-disable no-console */
   console.log(`Server berjalan pada: ${server.info.uri}`);
-  /* eslint-disable */
+  /* eslint-disable no-console */
 };
 
 init();

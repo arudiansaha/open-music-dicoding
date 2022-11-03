@@ -13,7 +13,7 @@ exports.up = (pgm) => {
       notNull: true,
     },
     owner: {
-      type: 'VARCHAR(50)',
+      type: 'TEXT',
       notNull: true,
     },
   });

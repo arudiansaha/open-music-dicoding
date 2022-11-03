@@ -6,12 +6,12 @@ exports.up = (pgm) => {
       primaryKey: true,
     },
     username: {
-      type: 'VARCHAR(50)',
+      type: 'TEXT',
       unique: true,
       notNull: true,
     },
     password: {
-      type: 'VARCHAR(50)',
+      type: 'TEXT',
       notNull: true,
     },
     fullname: {
