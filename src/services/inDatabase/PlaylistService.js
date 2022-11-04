@@ -3,7 +3,6 @@ const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
-const mapDBToModel = require('../../utils/PlaylistUtils');
 
 class PlaylistService {
   constructor() {
@@ -27,17 +26,55 @@ class PlaylistService {
     return result.rows[0].id;
   }
 
-  async getAllPlaylists(owner) {
+  async addSongIntoPlaylist(playlistId, songId) {
+    const id = `playlist_songs-${nanoid(16)}`;
+
+    const query = {
+      text: 'INSERT INTO playlist_songs VALUES($1, $2, $3) RETURNING id',
+      values: [id, playlistId, songId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new InvariantError('Song gagal ditambahkan ke playlist');
+    }
+  }
+
+  async getPlaylistById(playlistId, username) {
+    const query = {
+      text: 'SELECT * FROM playlists WHERE id = $1',
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows.map(({ id, name }) => ({ id, name, username }))[0];
+  }
+
+  async getAllPlaylists(owner, username) {
     const query = {
       text: 'SELECT * FROM playlists WHERE owner = $1',
       values: [owner],
     };
 
     const result = await this._pool.query(query);
-    return result.rows.map(mapDBToModel);
+    return result.rows.map(({ id, name }) => ({ id, name, username }));
   }
 
-  async deleteSongById(id) {
+  async deleteSongInPlaylist(playlistId, songId) {
+    const query = {
+      text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
+      values: [playlistId, songId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Song gagal dihapus. Song tidak ditemukan di dalam playlist');
+    }
+  }
+
+  async deletePlaylistById(id) {
     const query = {
       text: 'DELETE FROM playlists WHERE id = $1 RETURNING id',
       values: [id],

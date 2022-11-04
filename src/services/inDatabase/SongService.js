@@ -2,7 +2,10 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const mapDBToModel = require('../../utils/SongUtils');
+const {
+  mapDBToModel,
+  mapDBToIDTitlePerformerModel,
+} = require('../../utils/SongUtils');
 
 class SongService {
   constructor() {
@@ -30,7 +33,7 @@ class SongService {
 
   async getAllSongs() {
     const result = await this._pool.query('SELECT * FROM songs');
-    return result.rows.map(({ id, title, performer }) => ({ id, title, performer }));
+    return result.rows.map(mapDBToIDTitlePerformerModel);
   }
 
   async getSongByTitle(titleParams) {
@@ -48,7 +51,7 @@ class SongService {
 
     const slicedSongs = songs.slice(0, songs.length);
 
-    return slicedSongs.map(({ id, title, performer }) => ({ id, title, performer }));
+    return slicedSongs.map(mapDBToIDTitlePerformerModel);
   }
 
   async getSongByPerformer(performerParams) {
@@ -66,7 +69,7 @@ class SongService {
 
     const slicedSongs = songs.slice(0, songs.length);
 
-    return slicedSongs.map(({ id, title, performer }) => ({ id, title, performer }));
+    return slicedSongs.map(mapDBToIDTitlePerformerModel);
   }
 
   async getSongByTwoParams(titleParams, performerParams) {
@@ -78,7 +81,7 @@ class SongService {
     const songs = result.rows.filter((s) => (
       s.title.toString().toLowerCase().includes(titleToLowerCase)
       && s.performer.toString().toLowerCase().includes(performerToLowerCase)
-    )).map(({ id, title, performer }) => ({ id, title, performer }));
+    )).map(mapDBToIDTitlePerformerModel);
 
     if (!result.rows.length) {
       throw new NotFoundError('Song tidak ditemukan');
@@ -99,7 +102,22 @@ class SongService {
       throw new NotFoundError('Song tidak ditemukan');
     }
 
-    return result.rows.map(({ id, title, performer }) => ({ id, title, performer }));
+    return result.rows.map(mapDBToIDTitlePerformerModel);
+  }
+
+  async getSongByPlaylistId(playlistId) {
+    const query = {
+      text: 'SELECT * FROM songs WHERE id IN (SELECT song_id FROM playlist_songs WHERE playlist_id = $1)',
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Song tidak ditemukan');
+    }
+
+    return result.rows.map(mapDBToIDTitlePerformerModel);
   }
 
   async getSongById(id) {
@@ -142,6 +160,19 @@ class SongService {
 
     if (!result.rows.length) {
       throw new NotFoundError('Song gagal dihapus. Id tidak ditemukan');
+    }
+  }
+
+  async verifySongById(id) {
+    const query = {
+      text: 'SELECT id FROM songs WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Song tidak ditemukan');
     }
   }
 }

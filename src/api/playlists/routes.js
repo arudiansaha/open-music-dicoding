@@ -17,8 +17,32 @@ const routes = (handler) => [
   },
   {
     method: 'DELETE',
-    path: '/playlists',
+    path: '/playlists/{id}',
     handler: (request, h) => handler.deletePlaylistByIdHandler(request, h),
+    options: {
+      auth: 'playlist_jwt',
+    },
+  },
+  {
+    method: 'POST',
+    path: '/playlists/{id}/songs',
+    handler: (request, h) => handler.postSongIntoPlaylistHandler(request, h),
+    options: {
+      auth: 'playlist_jwt',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/playlists/{id}/songs',
+    handler: (request, h) => handler.getAllSongsInPlaylistHandler(request, h),
+    options: {
+      auth: 'playlist_jwt',
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/playlists/{id}/songs',
+    handler: (request, h) => handler.deleteSongInPlaylistHandler(request, h),
     options: {
       auth: 'playlist_jwt',
     },
