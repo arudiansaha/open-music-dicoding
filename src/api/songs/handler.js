@@ -35,7 +35,7 @@ class SongHandler {
 
     if (isTitleParams && isPerformerParams) {
       const sortByTwoParams = await this._service
-        .getSongByTwoParams(params.title, params.performer);
+        .getSongByTitleAndPerformer(params.title, params.performer);
 
       return {
         status: 'success',
@@ -77,7 +77,7 @@ class SongHandler {
     };
   }
 
-  async getSongByIdHandler(request) {
+  async getSongHandler(request) {
     const { id } = request.params;
     const song = await this._service.getSongById(id);
 
@@ -89,7 +89,7 @@ class SongHandler {
     };
   }
 
-  async putSongByIdHandler(request) {
+  async putSongHandler(request) {
     this._validator.validateSongPayload(request.payload);
 
     const { id } = request.params;
@@ -102,7 +102,7 @@ class SongHandler {
     };
   }
 
-  async deleteSongByIdHandler(request) {
+  async deleteSongHandler(request) {
     const { id } = request.params;
 
     await this._service.deleteSongById(id);

@@ -15,6 +15,10 @@ const playlist = require('./api/playlists');
 const PlaylistService = require('./services/inDatabase/PlaylistService');
 const playlistValidator = require('./validator/playlists');
 
+const collaboration = require('./api/collaborations');
+const CollaborationService = require('./services/inDatabase/CollaborationService');
+const collaborationValidator = require('./validator/collaborations');
+
 const user = require('./api/users');
 const UserService = require('./services/inDatabase/UserService');
 const userValidator = require('./validator/users');
@@ -29,7 +33,8 @@ const ClientError = require('./exceptions/ClientError');
 const init = async () => {
   const albumService = new AlbumService();
   const songService = new SongService();
-  const playlistService = new PlaylistService();
+  const collaborationService = new CollaborationService();
+  const playlistService = new PlaylistService(collaborationService);
   const userService = new UserService();
   const authenticationService = new AuthenticationService();
 
@@ -88,6 +93,15 @@ const init = async () => {
         userService,
         songService,
         validator: playlistValidator,
+      },
+    },
+    {
+      plugin: collaboration,
+      options: {
+        collaborationService,
+        playlistService,
+        userService,
+        validator: collaborationValidator,
       },
     },
     {

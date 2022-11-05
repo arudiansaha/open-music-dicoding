@@ -68,7 +68,7 @@ class SongService {
     return slicedSongs.map(({ id, title, performer }) => ({ id, title, performer }));
   }
 
-  getSongByTwoParams(titleParams, performerParams) {
+  getSongByTitleAndPerformer(titleParams, performerParams) {
     const titleToLowerCase = titleParams.toString().toLowerCase();
     const performerToLowerCase = performerParams.toString().toLowerCase();
 

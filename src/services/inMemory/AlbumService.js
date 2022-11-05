@@ -22,7 +22,7 @@ class AlbumService {
     return id;
   }
 
-  getAlbumById(id) {
+  getAlbum(id) {
     const album = this._album.filter((a) => a.id === id)[0];
 
     if (!album) {
@@ -32,7 +32,7 @@ class AlbumService {
     return album;
   }
 
-  editAlbumById(id, { name, year }) {
+  editAlbum(id, { name, year }) {
     const i = this._album.findIndex((a) => a.id === id);
 
     if (i === -1) {
@@ -46,7 +46,7 @@ class AlbumService {
     };
   }
 
-  deleteAlbumById(id) {
+  deleteAlbum(id) {
     const i = this._album.findIndex((a) => a.id === id);
 
     if (i === -1) {

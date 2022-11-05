@@ -26,7 +26,7 @@ class AlbumService {
     return result.rows[0].id;
   }
 
-  async getAlbumById(id) {
+  async getAlbum(id) {
     const query = {
       text: 'SELECT * FROM albums WHERE id = $1',
       values: [id],
@@ -41,7 +41,7 @@ class AlbumService {
     return result.rows.map(mapDBToModel)[0];
   }
 
-  async editAlbumById(id, { name, year }) {
+  async editAlbum(id, { name, year }) {
     const query = {
       text: 'UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id',
       values: [name, year, id],
@@ -54,7 +54,7 @@ class AlbumService {
     }
   }
 
-  async deleteAlbumById(id) {
+  async deleteAlbum(id) {
     const query = {
       text: 'DELETE FROM albums WHERE id = $1 RETURNING id',
       values: [id],

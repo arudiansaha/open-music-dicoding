@@ -72,7 +72,7 @@ class SongService {
     return slicedSongs.map(mapDBToIDTitlePerformerModel);
   }
 
-  async getSongByTwoParams(titleParams, performerParams) {
+  async getSongByTitleAndPerformer(titleParams, performerParams) {
     const titleToLowerCase = titleParams.toString().toLowerCase();
     const performerToLowerCase = performerParams.toString().toLowerCase();
 
