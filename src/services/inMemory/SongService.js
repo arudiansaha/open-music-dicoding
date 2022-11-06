@@ -104,7 +104,7 @@ class SongService {
     return songs;
   }
 
-  editSongById(id, {
+  editSong(id, {
     title, year, genre, performer, duration,
   }) {
     const i = this._song.findIndex((s) => s.id === id);
@@ -123,7 +123,7 @@ class SongService {
     };
   }
 
-  deleteSongById(id) {
+  deleteSong(id) {
     const i = this._song.findIndex((s) => s.id === id);
 
     if (i === -1) {

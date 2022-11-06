@@ -26,48 +26,19 @@ class SongHandler {
   }
 
   async getAllSongsHandler(request) {
-    const params = request.query;
+    const { title, performer } = request.query;
 
-    const hasProperty = Object.prototype.hasOwnProperty;
+    let songs;
 
-    const isTitleParams = hasProperty.call(params, 'title');
-    const isPerformerParams = hasProperty.call(params, 'performer');
-
-    if (isTitleParams && isPerformerParams) {
-      const sortByTwoParams = await this._service
-        .getSongByTitleAndPerformer(params.title, params.performer);
-
-      return {
-        status: 'success',
-        data: {
-          songs: sortByTwoParams,
-        },
-      };
+    if (title && performer) {
+      songs = await this._service.getSongByTitleAndPerformer(title, performer);
+    } else if (title) {
+      songs = await this._service.getSongByTitle(title);
+    } else if (performer) {
+      songs = await this._service.getSongByPerformer(performer);
+    } else {
+      songs = await this._service.getAllSongs();
     }
-
-    if (isTitleParams) {
-      const songSortByTitle = await this._service.getSongByTitle(params.title);
-
-      return {
-        status: 'success',
-        data: {
-          songs: songSortByTitle,
-        },
-      };
-    }
-
-    if (isPerformerParams) {
-      const songSortByPerformer = await this._service.getSongByPerformer(params.performer);
-
-      return {
-        status: 'success',
-        data: {
-          songs: songSortByPerformer,
-        },
-      };
-    }
-
-    const songs = await this._service.getAllSongs();
 
     return {
       status: 'success',
@@ -94,7 +65,7 @@ class SongHandler {
 
     const { id } = request.params;
 
-    await this._service.editSongById(id, request.payload);
+    await this._service.editSong(id, request.payload);
 
     return {
       status: 'success',
@@ -105,7 +76,7 @@ class SongHandler {
   async deleteSongHandler(request) {
     const { id } = request.params;
 
-    await this._service.deleteSongById(id);
+    await this._service.deleteSong(id);
 
     return {
       status: 'success',

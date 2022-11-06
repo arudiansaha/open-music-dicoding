@@ -36,8 +36,8 @@ class SongService {
     return result.rows.map(mapDBToIDTitlePerformerModel);
   }
 
-  async getSongByTitle(titleParams) {
-    const titleToLowerCase = titleParams.toString().toLowerCase();
+  async getSongByTitle(songTitle) {
+    const titleToLowerCase = songTitle.toString().toLowerCase();
 
     const result = await this._pool.query('SELECT * FROM songs');
 
@@ -54,8 +54,8 @@ class SongService {
     return slicedSongs.map(mapDBToIDTitlePerformerModel);
   }
 
-  async getSongByPerformer(performerParams) {
-    const performerToLowerCase = performerParams.toString().toLowerCase();
+  async getSongByPerformer(songPerformer) {
+    const performerToLowerCase = songPerformer.toString().toLowerCase();
 
     const result = await this._pool.query('SELECT * FROM songs');
 
@@ -72,9 +72,9 @@ class SongService {
     return slicedSongs.map(mapDBToIDTitlePerformerModel);
   }
 
-  async getSongByTitleAndPerformer(titleParams, performerParams) {
-    const titleToLowerCase = titleParams.toString().toLowerCase();
-    const performerToLowerCase = performerParams.toString().toLowerCase();
+  async getSongByTitleAndPerformer(songTitle, songPerformer) {
+    const titleToLowerCase = songTitle.toString().toLowerCase();
+    const performerToLowerCase = songPerformer.toString().toLowerCase();
 
     const result = await this._pool.query('SELECT * FROM songs');
 
@@ -90,10 +90,10 @@ class SongService {
     return songs.slice(0, songs.length);
   }
 
-  async getSongByAlbumId(idParams) {
+  async getSongByAlbumId(albumId) {
     const query = {
       text: 'SELECT * FROM songs WHERE album_id = $1',
-      values: [idParams],
+      values: [albumId],
     };
 
     const result = await this._pool.query(query);
@@ -135,7 +135,7 @@ class SongService {
     return result.rows.map(mapDBToModel)[0];
   }
 
-  async editSongById(id, {
+  async editSong(id, {
     title, year, genre, performer, duration, albumId,
   }) {
     const query = {
@@ -150,7 +150,7 @@ class SongService {
     }
   }
 
-  async deleteSongById(id) {
+  async deleteSong(id) {
     const query = {
       text: 'DELETE FROM songs WHERE id = $1 RETURNING id',
       values: [id],
@@ -163,7 +163,7 @@ class SongService {
     }
   }
 
-  async verifySongById(id) {
+  async verifySongId(id) {
     const query = {
       text: 'SELECT id FROM songs WHERE id = $1',
       values: [id],

@@ -39,14 +39,14 @@ class CollaborationService {
 
   async verifyCollaborator(playlistId, userId) {
     const query = {
-      text: 'SELECT * FROM collaborations WHERE playllist_id = $1 AND user_id = $2 RETURNING id',
+      text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
       values: [playlistId, userId],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new InvariantError('Kolaborasi gagal dihapus');
+      throw new InvariantError('Kolaborasi gagal diverifikasi');
     }
   }
 }

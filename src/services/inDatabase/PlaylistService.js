@@ -3,7 +3,10 @@ const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
-const mapDBToModel = require('../../utils/PlaylistUtils');
+const {
+  mapDBToModel,
+  mapDBToIdNameUsernameModel,
+} = require('../../utils/PlaylistUtils');
 
 class PlaylistService {
   constructor(collaborationService) {
@@ -43,25 +46,25 @@ class PlaylistService {
     }
   }
 
-  async getPlaylist(playlistId, username) {
+  async getPlaylist(playlistId) {
     const query = {
-      text: 'SELECT * FROM playlists WHERE id = $1',
+      text: 'SELECT playlists.id, playlists.name, users.username FROM playlists RIGHT JOIN users ON playlists.owner = users.id WHERE playlists.id = $1',
       values: [playlistId],
     };
 
     const result = await this._pool.query(query);
 
-    return result.rows.map(({ id, name }) => ({ id, name, username }))[0];
+    return result.rows.map(mapDBToIdNameUsernameModel)[0];
   }
 
-  async getAllPlaylists(playlistOwner, username) {
+  async getAllPlaylists(playlistOwner) {
     const query = {
-      text: 'SELECT * FROM playlists WHERE owner = $1',
+      text: 'SELECT playlists.id, playlists.name, users.username FROM playlists FULL JOIN users ON playlists.owner = users.id FULL JOIN collaborations ON playlists.id = collaborations.playlist_id WHERE playlists.owner = $1 OR collaborations.user_id = $1',
       values: [playlistOwner],
     };
 
     const result = await this._pool.query(query);
-    return result.rows.map(({ id, name }) => ({ id, name, username }));
+    return result.rows.map(mapDBToIdNameUsernameModel);
   }
 
   async deleteSongInPlaylist(playlistId, songId) {
@@ -134,11 +137,7 @@ class PlaylistService {
       values: [id, playlistId, songId, userId, action, time],
     };
 
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new InvariantError('Activity gagal ditambahkan');
-    }
+    await this._pool.query(query);
   }
 
   async getPlaylistActivities(playlistId) {

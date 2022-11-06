@@ -66,21 +66,6 @@ class UserService {
     return id;
   }
 
-  async getUsername(userId) {
-    const query = {
-      text: 'SELECT username FROM users WHERE id = $1',
-      values: [userId],
-    };
-
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new NotFoundError('Username tidak ditemukan');
-    }
-
-    return result.rows[0].username;
-  }
-
   async verifyUserId(id) {
     const query = {
       text: 'SELECT * FROM users WHERE id = $1',

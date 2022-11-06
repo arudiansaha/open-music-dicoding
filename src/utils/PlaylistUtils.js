@@ -4,4 +4,6 @@ const mapDBToModel = ({
   username, title, action, time,
 });
 
-module.exports = mapDBToModel;
+const mapDBToIdNameUsernameModel = ({ id, name, username }) => ({ id, name, username });
+
+module.exports = { mapDBToModel, mapDBToIdNameUsernameModel };
