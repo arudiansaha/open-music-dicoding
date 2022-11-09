@@ -28,6 +28,10 @@ const AuthenticationService = require('./services/inDatabase/AuthenticationServi
 const TokenManager = require('./tokenize/TokenManager');
 const authenticationValidator = require('./validator/authentications');
 
+const _export = require('./api/exports');
+const ProducerService = require('./services/mesageBroker/ProducerService');
+const exportValidator = require('./validator/exports');
+
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
@@ -119,6 +123,14 @@ const init = async () => {
         validator: authenticationValidator,
       },
     },
+    {
+      plugin: _export,
+      options: {
+        exportService: ProducerService,
+        playlistService,
+        validator: exportValidator,
+      },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {
@@ -145,9 +157,7 @@ const init = async () => {
       });
 
       newResponse.code(500);
-      /* eslint-disable no-console */
       console.log(newResponse);
-      /* eslint-disable no-console */
       return newResponse;
     }
 
