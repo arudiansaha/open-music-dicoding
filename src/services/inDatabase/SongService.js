@@ -45,7 +45,7 @@ class SongService {
       s.title.toString().toLowerCase().includes(titleToLowerCase)
     ));
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Song tidak ditemukan');
     }
 
@@ -63,7 +63,7 @@ class SongService {
       s.performer.toString().toLowerCase().includes(performerToLowerCase)
     ));
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Song tidak ditemukan');
     }
 
@@ -83,7 +83,7 @@ class SongService {
       && s.performer.toString().toLowerCase().includes(performerToLowerCase)
     )).map(mapDBToIDTitlePerformerModel);
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Song tidak ditemukan');
     }
 
@@ -97,11 +97,6 @@ class SongService {
     };
 
     const result = await this._pool.query(query);
-
-    if (result.rows.length === undefined) {
-      throw new NotFoundError('Song tidak ditemukan');
-    }
-
     return result.rows.map(mapDBToIDTitlePerformerModel);
   }
 
@@ -113,7 +108,7 @@ class SongService {
 
     const result = await this._pool.query(query);
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Song tidak ditemukan');
     }
 
@@ -128,7 +123,7 @@ class SongService {
 
     const result = await this._pool.query(query);
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Song tidak ditemukan');
     }
 
@@ -145,7 +140,7 @@ class SongService {
 
     const result = await this._pool.query(query);
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Gagal memperbarui song. Id tidak ditemukan');
     }
   }
@@ -158,7 +153,7 @@ class SongService {
 
     const result = await this._pool.query(query);
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Song gagal dihapus. Id tidak ditemukan');
     }
   }
@@ -171,7 +166,7 @@ class SongService {
 
     const result = await this._pool.query(query);
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new NotFoundError('Song tidak ditemukan');
     }
   }
