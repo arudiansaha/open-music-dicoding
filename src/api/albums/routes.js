@@ -43,6 +43,19 @@ const routes = (handler) => [
       },
     },
   },
+  {
+    method: 'POST',
+    path: '/albums/{id}/likes',
+    handler: (request, h) => handler.postLikeOnAlbumHandler(request, h),
+    options: {
+      auth: 'playlist_jwt',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/albums/{id}/likes',
+    handler: (request, h) => handler.getLikedAlbumHandler(request, h),
+  },
 ];
 
 module.exports = routes;

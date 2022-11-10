@@ -8,6 +8,7 @@ const path = require('path');
 const album = require('./api/albums');
 const AlbumService = require('./services/inDatabase/AlbumService');
 const StorageService = require('./services/storage/StorageService');
+const CacheService = require('./services/cache/CacheService');
 const albumValidator = require('./validator/albums');
 
 const song = require('./api/songs');
@@ -38,7 +39,8 @@ const exportValidator = require('./validator/exports');
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
-  const albumService = new AlbumService();
+  const cacheService = new CacheService();
+  const albumService = new AlbumService(cacheService);
   const storageService = new StorageService(path.resolve(__dirname, 'api/albums/file/images'));
   const songService = new SongService();
   const collaborationService = new CollaborationService();

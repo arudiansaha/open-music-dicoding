@@ -44,6 +44,40 @@ class AlbumHandler {
     return response;
   }
 
+  async postLikeOnAlbumHandler(request, h) {
+    const { id } = request.params;
+    const { id: credentialId } = request.auth.credentials;
+
+    await this._albumService.verifyAlbumId(id);
+    await this._albumService.checkIfAlreadyExist(credentialId, id);
+
+    const response = h.response({
+      status: 'success',
+      message: 'Album telah disukai',
+    });
+
+    response.code(201);
+    return response;
+  }
+
+  async getLikedAlbumHandler(request, h) {
+    const { id } = request.params;
+
+    const likeNumber = await this._albumService.getLikedAlbum(id);
+    const likes = (typeof likeNumber === typeof '') ? JSON.parse(likeNumber) : likeNumber;
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        likes,
+      },
+    });
+
+    if (typeof likeNumber === typeof '') response.header('X-Data-Source', 'cache');
+
+    return response;
+  }
+
   async getAlbumHandler(request) {
     const { id } = request.params;
     const album = await this._albumService.getAlbum(id);
